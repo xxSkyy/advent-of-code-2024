@@ -22,7 +22,7 @@ fn is_report_correct(level: &Vec<i32>) -> bool {
     let mut last_direction = 0;
     let mut last_level = report_iter.next().unwrap();
 
-    report_iter.for_each(|level| {
+    for level in report_iter {
         let difference = last_level - level;
         let direction = get_direction(&difference);
 
@@ -34,12 +34,12 @@ fn is_report_correct(level: &Vec<i32>) -> bool {
 
         if is_level_wrong {
             is_report_correct = false;
-            return;
+            break;
         }
 
         last_direction = direction;
         last_level = level;
-    });
+    }
 
     return is_report_correct;
 }
