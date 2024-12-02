@@ -26,12 +26,15 @@ fn is_report_correct(level: &Vec<i32>) -> bool {
         let difference = last_level - level;
         let direction = get_direction(&difference);
 
-        if difference.abs() < MIN_LEVEL_DIFF || difference.abs() > MAX_LEVEL_DIFF {
-            is_report_correct = false;
-        }
+        let is_too_much_difference =
+            difference.abs() < MIN_LEVEL_DIFF || difference.abs() > MAX_LEVEL_DIFF;
+        let is_bad_direction = last_direction != 0 && direction != last_direction;
 
-        if last_direction != 0 && direction != last_direction {
+        let is_level_wrong = is_too_much_difference || is_bad_direction;
+
+        if is_level_wrong {
             is_report_correct = false;
+            return;
         }
 
         last_direction = direction;
