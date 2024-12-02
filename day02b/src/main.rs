@@ -56,8 +56,6 @@ fn main() {
                 .map(|level| -> i32 { level.parse().expect("Failed to parse level to number") })
                 .collect();
 
-            let mut variations: Vec<Vec<i32>> = vec![];
-
             if is_report_correct(&report) {
                 correct_levels += 1;
                 return;
@@ -67,10 +65,6 @@ fn main() {
                 let mut variation = report.clone();
 
                 variation.remove(index);
-                variations.push(variation);
-            }
-
-            for variation in variations.iter() {
                 if is_report_correct(&variation) {
                     correct_levels += 1;
                     break;
