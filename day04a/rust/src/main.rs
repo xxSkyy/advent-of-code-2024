@@ -66,5 +66,5 @@ fn main() {
         .map(|_| "")
         .collect();
 
-    println!("{}", result_vec.len());
+    println!("Xmases: {}", result_vec.len());
 }
