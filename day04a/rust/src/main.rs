@@ -2,6 +2,8 @@ use std::fs;
 
 use fancy_regex::Regex;
 
+// hehe regex hehe
+
 const INPUT_LOCATION: &str = "./input.txt";
 
 fn rotate_vec(input_vec: &Vec<Vec<String>>) -> Vec<Vec<String>> {
