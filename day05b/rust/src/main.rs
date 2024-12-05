@@ -31,14 +31,10 @@ fn main() {
                 .collect();
 
             let is_correct = rules_aplies.iter().all(|rules| {
-                let first = numbers.iter().position(|n| *n == rules[0]);
-                let second = numbers.iter().position(|n| *n == rules[1]);
+                let first_index = numbers.iter().position(|n| *n == rules[0]).unwrap();
+                let second_index = numbers.iter().position(|n| *n == rules[1]).unwrap();
 
-                if let (Some(first_index), Some(second_index)) = (first, second) {
-                    return first_index < second_index;
-                }
-
-                false
+                first_index < second_index
             });
 
             if !is_correct {
