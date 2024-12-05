@@ -46,10 +46,6 @@ fn main() {
                     .iter()
                     .find(|rule| rule.contains(a) && rule.contains(b));
 
-                if let None = rule {
-                    return Ordering::Equal;
-                }
-
                 if &rule.unwrap()[0] == a {
                     return Ordering::Less;
                 }
