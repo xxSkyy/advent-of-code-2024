@@ -37,11 +37,11 @@ fn main() {
                 first_index < second_index
             });
 
-            if is_correct {
-                return acc + numbers[numbers.len() / 2];
+            if !is_correct {
+                return acc;
             }
 
-            acc
+            return acc + numbers[numbers.len() / 2];
         });
 
     println!("Sum: {}", sum);
