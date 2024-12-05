@@ -24,13 +24,13 @@ fn main() {
                 .map(|n| n.parse::<usize>().unwrap())
                 .collect();
 
-            let rules_aplies: Vec<Vec<usize>> = rules
+            let applied_rules: Vec<Vec<usize>> = rules
                 .iter()
                 .filter(|rule| numbers.contains(&rule[0]) && numbers.contains(&rule[1]))
                 .map(|rule| rule.clone())
                 .collect();
 
-            let is_correct = rules_aplies.iter().all(|rules| {
+            let is_correct = applied_rules.iter().all(|rules| {
                 let first_index = numbers.iter().position(|n| *n == rules[0]).unwrap();
                 let second_index = numbers.iter().position(|n| *n == rules[1]).unwrap();
 
@@ -42,7 +42,7 @@ fn main() {
             }
 
             numbers.sort_by(|a, b| {
-                let rule = rules_aplies
+                let rule = applied_rules
                     .iter()
                     .find(|rule| rule.contains(a) && rule.contains(b));
 
