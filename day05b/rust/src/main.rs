@@ -37,26 +37,26 @@ fn main() {
                 first_index < second_index
             });
 
-            if !is_correct {
-                numbers.sort_by(|a, b| {
-                    let rule = rules_aplies
-                        .iter()
-                        .find(|rule| rule.contains(a) && rule.contains(b));
-
-                    if let None = rule {
-                        return Ordering::Equal;
-                    }
-
-                    if &rule.unwrap()[0] == a {
-                        return Ordering::Less;
-                    }
-                    return Ordering::Greater;
-                });
-
-                return acc + numbers[numbers.len() / 2];
+            if is_correct {
+                return acc;
             }
 
-            acc
+            numbers.sort_by(|a, b| {
+                let rule = rules_aplies
+                    .iter()
+                    .find(|rule| rule.contains(a) && rule.contains(b));
+
+                if let None = rule {
+                    return Ordering::Equal;
+                }
+
+                if &rule.unwrap()[0] == a {
+                    return Ordering::Less;
+                }
+                return Ordering::Greater;
+            });
+
+            return acc + numbers[numbers.len() / 2];
         });
 
     println!("Sum: {}", sum);
