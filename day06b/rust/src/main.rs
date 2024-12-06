@@ -1,4 +1,9 @@
-use std::{collections::HashSet, fs};
+use rayon::prelude::*;
+use std::{
+    collections::HashSet,
+    fs,
+    sync::{Arc, Mutex},
+};
 
 const INPUT_LOCATION: &str = "./input.txt";
 
@@ -52,6 +57,8 @@ fn will_guard_loop(map: Vec<Vec<String>>, init_pos: [isize; 2], init_dir: [isize
 fn main() {
     let input = fs::read_to_string(INPUT_LOCATION).expect("No input file found");
 
+    let mut oc = 0;
+
     let init_map: Vec<Vec<String>> = input
         .trim()
         .split("\n")
@@ -79,6 +86,7 @@ fn main() {
     let mut positions_trace: Vec<[isize; 2]> = vec![guard_pos.clone()];
 
     while is_guard_on_map {
+        oc += 1;
         let next_pos = [guard_pos[0] + guard_dir[0], guard_pos[1] + guard_dir[1]];
         if next_pos[0] < 0 || next_pos[1] < 0 || next_pos[0] >= map_size || next_pos[1] >= map_size
         {
@@ -111,17 +119,17 @@ fn main() {
     let guard_pos: [isize; 2] = [guard_index / map_size, guard_index % map_size];
     let guard_dir: [isize; 2] = [-1, 0];
 
-    let mut obstacle_positions = 0;
+    let obstacle_positions = Arc::new(Mutex::new(0));
 
-    for position in unqiue_positions {
+    unqiue_positions.par_iter().for_each(|position| {
         let mut map = init_map.clone();
         map[usize::try_from(position[0]).unwrap()][usize::try_from(position[1]).unwrap()] =
             "#".to_string();
 
         if will_guard_loop(map, guard_pos, guard_dir) {
-            obstacle_positions += 1;
+            *obstacle_positions.lock().unwrap() += 1;
         }
-    }
+    });
 
-    println!("Obstacle count: {}", obstacle_positions);
+    println!("Obstacle count: {}", obstacle_positions.lock().unwrap());
 }
