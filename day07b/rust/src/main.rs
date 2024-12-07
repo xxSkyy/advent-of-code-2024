@@ -12,7 +12,7 @@ fn main() {
     let input = fs::read_to_string(INPUT_LOCATION).expect("No input file found");
 
     let correct_sum = Arc::new(Mutex::new(0));
-    let symbols = ["+", "*", "||"];
+    let symbols = [0, 1, 2];
 
     let line_regex = Regex::new(r"(.*\d): (.*\d)").expect("Regex issue");
 
@@ -53,8 +53,8 @@ fn main() {
                         };
 
                         match combination[index - 1] {
-                            &"+" => acc + number,
-                            &"*" => acc * number,
+                            &0 => acc + number,
+                            &1 => acc * number,
                             _ => format!("{}{}", acc, number).parse::<usize>().unwrap(),
                         }
                     });
