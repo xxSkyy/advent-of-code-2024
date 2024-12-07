@@ -42,22 +42,23 @@ fn main() {
         let combinations = combinations_input.into_iter().multi_cartesian_product();
 
         for combination in combinations {
-            let sum: usize =
-                numbers
-                    .clone()
-                    .into_iter()
-                    .enumerate()
-                    .fold(0, |acc, (index, number)| {
-                        if acc == 0 {
-                            return number;
-                        };
+            let mut sum: usize = 0;
 
-                        match combination[index - 1] {
-                            &0 => acc + number,
-                            &1 => acc * number,
-                            _ => format!("{}{}", acc, number).parse::<usize>().unwrap(),
-                        }
-                    });
+            for (index, number) in numbers.clone().into_iter().enumerate() {
+                if sum == 0 {
+                    sum += number;
+                    continue;
+                };
+                if desired_sum < sum {
+                    break;
+                }
+
+                match combination[index - 1] {
+                    &0 => sum += number,
+                    &1 => sum *= number,
+                    _ => sum = format!("{}{}", sum, number).parse::<usize>().unwrap(),
+                }
+            }
 
             if desired_sum == sum {
                 *correct_sum.lock().unwrap() += sum;
