@@ -16,16 +16,16 @@ fn main() {
 
     let line_regex = Regex::new(r"(.*\d): (.*\d)").expect("Regex issue");
 
-    let data: Vec<Vec<isize>> = input
+    let data: Vec<Vec<usize>> = input
         .trim()
         .lines()
         .map(|line| {
             let captures = line_regex.captures(line).unwrap();
-            let mut result = vec![captures[1].parse::<isize>().unwrap()];
-            let mut numbers: Vec<isize> = captures[2]
+            let mut result = vec![captures[1].parse::<usize>().unwrap()];
+            let mut numbers: Vec<usize> = captures[2]
                 .to_string()
                 .split(" ")
-                .map(|n| n.parse::<isize>().unwrap())
+                .map(|n| n.parse::<usize>().unwrap())
                 .collect();
 
             result.append(&mut numbers);
@@ -42,22 +42,20 @@ fn main() {
         let combinations = combinations_input.into_iter().multi_cartesian_product();
 
         for combination in combinations {
-            let sum: isize =
+            let sum: usize =
                 numbers
                     .clone()
                     .into_iter()
                     .enumerate()
                     .fold(0, |acc, (index, number)| {
-                        let number = isize::try_from(number).unwrap();
-
                         if acc == 0 {
                             return number;
                         };
 
-                        match combination[usize::try_from(index - 1).unwrap()] {
+                        match combination[index - 1] {
                             &"+" => acc + number,
                             &"*" => acc * number,
-                            _ => format!("{}{}", acc, number).parse::<isize>().unwrap(),
+                            _ => format!("{}{}", acc, number).parse::<usize>().unwrap(),
                         }
                     });
 
