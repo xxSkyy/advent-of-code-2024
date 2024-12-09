@@ -1,7 +1,4 @@
-use std::{
-    fs,
-    sync::{Arc, Mutex},
-};
+use std::fs;
 
 const INPUT_LOCATION: &str = "./input.txt";
 const EMPTY_SYMBOL: isize = -1;
@@ -34,11 +31,18 @@ fn main() {
         is_file = !is_file;
     });
 
+    let mut empty_idxs = blocks
+        .clone()
+        .into_iter()
+        .enumerate()
+        .filter(|(_, block)| *block == EMPTY_SYMBOL)
+        .map(|(index, _)| index);
+
     for block_idx in (file_blocks_count..blocks.len() as isize).rev() {
-        let empty_idx = blocks
-            .iter()
-            .position(|block| *block == EMPTY_SYMBOL)
-            .unwrap();
+        if blocks[block_idx as usize] == EMPTY_SYMBOL {
+            continue;
+        };
+        let empty_idx = empty_idxs.next().unwrap();
 
         blocks.swap(empty_idx, block_idx as usize);
     }
@@ -46,6 +50,9 @@ fn main() {
     let _ = blocks.split_off(file_blocks_count as usize);
 
     blocks.into_iter().enumerate().for_each(|(index, number)| {
+        if number == EMPTY_SYMBOL {
+            return;
+        }
         checksum += index * usize::try_from(number).unwrap();
     });
 
