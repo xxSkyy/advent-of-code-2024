@@ -1,7 +1,13 @@
-use std::fs;
+use std::{collections::HashMap, fs};
 
 const INPUT_LOCATION: &str = "./input.txt";
 const EMPTY_SYMBOL: isize = -1;
+
+struct Block {
+    id: usize,
+    index: isize,
+    length: isize,
+}
 
 fn main() {
     let input = fs::read_to_string(INPUT_LOCATION).expect("No input file found");
@@ -31,42 +37,66 @@ fn main() {
         is_file = !is_file;
     });
 
-    for block_id in (0..id).rev() {
-        let items: Vec<_> = blocks
-            .iter()
-            .enumerate()
-            .filter(|(_, block)| **block == block_id)
-            .collect();
+    let mut empty_idxs: Vec<_> = blocks
+        .clone()
+        .into_iter()
+        .enumerate()
+        .filter(|(_, block)| *block == EMPTY_SYMBOL)
+        .map(|(index, _)| index)
+        .collect::<Vec<_>>();
 
-        let start_idx = items[0].0;
-        let file_size = items.len();
+    let mut blocks_map: HashMap<isize, Block> = HashMap::new();
 
-        drop(items);
+    for (index, block) in blocks.iter().enumerate() {
+        if *block == EMPTY_SYMBOL {
+            continue;
+        };
+        blocks_map
+            .entry(*block)
+            .and_modify(|entry| entry.length += 1)
+            .or_insert(Block {
+                id: *block as usize,
+                index: index as isize,
+                length: 1,
+            });
+    }
 
-        let space = blocks.iter().enumerate().position(|(index, _)| {
-            let mut found = true;
-            if index >= start_idx {
-                return false;
-            }
+    let mut blocks_vec = Vec::from_iter(blocks_map.values());
+    blocks_vec.sort_by_key(|block| block.id);
 
-            for n in 0..file_size {
-                let n_item = blocks.get(index + n);
-                if let Some(block) = n_item {
-                    if *block == EMPTY_SYMBOL {
-                        continue;
-                    }
-                }
+    for block in blocks_vec.into_iter().rev() {
+        let start_idx = block.index;
+        let file_size = block.length;
 
-                found = false;
+        let mut b_index: isize = -1;
+        let mut e_index: isize = -1;
+
+        let mut found = false;
+        for (index, blocks_index) in empty_idxs.iter().enumerate().collect::<Vec<_>>() {
+            if *blocks_index >= start_idx as usize {
                 break;
             }
 
-            found
-        });
-
-        if let Some(free_index) = space {
             for n in 0..file_size {
-                blocks.swap(start_idx + n, free_index + n);
+                let get_item = empty_idxs.get(index + n as usize);
+                if let Some(item) = get_item {
+                    if *item == *blocks_index + n as usize && n == file_size - 1 {
+                        found = true;
+                        b_index = (*blocks_index).clone() as isize;
+                        e_index = index.clone() as isize;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if found {
+            for n in 0..file_size {
+                blocks.swap(
+                    start_idx as usize + n as usize,
+                    b_index as usize + n as usize,
+                );
+                empty_idxs.remove(e_index as usize);
             }
         }
     }
