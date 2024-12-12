@@ -6,10 +6,9 @@ const SEPARATOR: &str = " ";
 const BLINKS: usize = 75;
 
 fn tranform_stones(stones: &mut HashMap<usize, usize>) {
-    let stones_keys = stones.clone();
+    let stones_clone = stones.clone();
 
-    for (number, amount) in stones_keys.iter() {
-        // stones.remove(number);
+    for (number, amount) in stones_clone.iter() {
         *stones.get_mut(number).unwrap() -= amount;
 
         if *number == 0 {
@@ -53,10 +52,8 @@ fn main() {
             .or_insert(1 as usize);
     });
 
-    for n in 0..BLINKS {
+    for _ in 0..BLINKS {
         tranform_stones(&mut stones_map);
-        // println!("{}/{} STONES: ", n + 1, BLINKS);
-        // println!("{:?}", stones_map);
     }
 
     let stones_amount = stones_map.values().fold(0, |acc, amount| acc + amount);
