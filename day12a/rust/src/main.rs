@@ -2,7 +2,6 @@ use std::fs;
 
 const INPUT_LOCATION: &str = "./input.txt";
 const POSSIBLE_DIRECTIONS: [[i8; 2]; 4] = [[0, 1], [1, 0], [0, -1], [-1, 0]];
-const EMPTY_PLACE: char = 'x';
 
 type Map = Vec<Vec<char>>;
 
@@ -83,9 +82,6 @@ fn main() {
 
     map.iter().enumerate().for_each(|(y, line)| {
         line.iter().enumerate().for_each(|(x, value)| {
-            if *value == EMPTY_PLACE {
-                return;
-            }
             let region = pathfind(
                 &mut new_map,
                 &[x as isize, y as isize],
