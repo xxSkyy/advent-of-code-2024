@@ -1,54 +1,61 @@
-use std::fs;
+use std::{collections::HashMap, fs};
 
 const INPUT_LOCATION: &str = "./input.txt";
 const SEPARATOR: &str = " ";
 const BLINKS: usize = 25;
 
-fn tranform_stones(stones: &Vec<usize>) -> Vec<usize> {
-    let stones = stones.clone();
-    let mut new_stones: Vec<usize> = vec![];
+fn tranform_stones(stones: &mut HashMap<usize, usize>) {
+    let stones_clone = stones.clone();
 
-    for stone in stones.iter() {
-        if *stone == 0 {
-            new_stones.push(1);
+    for (number, amount) in stones_clone.iter() {
+        *stones.get_mut(number).unwrap() -= amount;
 
+        if *number == 0 {
+            let _ = *stones.entry(1).or_insert(0);
+            *stones.get_mut(&1).unwrap() += amount;
             continue;
         }
 
-        let stone_string = stone.to_string();
+        let stone_string = number.to_string();
         if stone_string.len() % 2 == 0 {
             let stone_string_split = stone_string.len() / 2;
-            new_stones.push(
-                stone_string[0..stone_string_split]
-                    .parse::<usize>()
-                    .unwrap(),
-            );
-            new_stones.push(
-                stone_string[stone_string_split..stone_string.len()]
-                    .parse::<usize>()
-                    .unwrap(),
-            );
+
+            let num1 = stone_string[0..stone_string_split]
+                .parse::<usize>()
+                .unwrap();
+
+            let num2 = stone_string[stone_string_split..stone_string.len()]
+                .parse::<usize>()
+                .unwrap();
+
+            let _ = *stones.entry(num1).or_insert(0);
+            *stones.get_mut(&num1).unwrap() += amount;
+            let _ = *stones.entry(num2).or_insert(0);
+            *stones.get_mut(&num2).unwrap() += amount;
 
             continue;
         }
 
-        new_stones.push(stone * 2024);
+        let _ = *stones.entry(number * 2024).or_insert(0);
+        *stones.get_mut(&(number * 2024)).unwrap() += amount;
     }
-
-    new_stones
 }
 
 fn main() {
     let input = fs::read_to_string(INPUT_LOCATION).expect("No input file found");
-    let mut stones = input
-        .trim()
-        .split(SEPARATOR)
-        .map(|item| item.parse::<usize>().unwrap())
-        .collect::<Vec<_>>();
+    let mut stones_map = HashMap::new();
+
+    input.trim().split(SEPARATOR).for_each(|item| {
+        stones_map
+            .entry(item.parse::<usize>().unwrap())
+            .or_insert(1 as usize);
+    });
 
     for _ in 0..BLINKS {
-        stones = tranform_stones(&stones);
+        tranform_stones(&mut stones_map);
     }
 
-    println!("Stones after {} blinks: {}", BLINKS, stones.len());
+    let stones_amount = stones_map.values().fold(0, |acc, amount| acc + amount);
+
+    println!("Stones after {} blinks: {:?}", BLINKS, stones_amount);
 }
