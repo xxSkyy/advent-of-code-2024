@@ -79,6 +79,23 @@ fn pathfind(map: &mut Map, [x_curr, y_curr]: &[isize; 2], region: &Region) -> Re
     new_region
 }
 
+fn remove_adjacent(region: &mut Region, first_el: &[isize; 4], loc: [isize; 2], dir: [isize; 2]) {
+    let mut finish = false;
+    let mut loc = loc.clone();
+
+    while !finish {
+        loc = [loc[0] + dir[0], loc[1] + dir[1]];
+        let next_item = [loc[0], loc[1], first_el[2], first_el[3]];
+
+        if !region.sides.contains(&next_item) {
+            finish = true;
+            continue;
+        };
+
+        region.sides.remove(&next_item);
+    }
+}
+
 fn count_sides(region: &Region) -> usize {
     let mut region = region.clone();
     let mut sides_count = 0;
@@ -86,44 +103,19 @@ fn count_sides(region: &Region) -> usize {
     while region.sides.len() != 0 {
         let elem = region.sides.iter().next().unwrap().clone();
         region.sides.remove(&elem);
+
         sides_count += 1;
 
-        let direction = match [elem[2], elem[3]] {
+        let dir = match [elem[2], elem[3]] {
             [1, 0] => [0, 1],
             [-1, 0] => [0, 1],
             _ => [1, 0],
         };
 
-        let direction2 = [direction[0] * -1, direction[1] * -1];
+        let dir2 = [dir[0] * -1, dir[1] * -1];
 
-        let mut finish_up = false;
-        let mut up_loc = [elem[0], elem[1]];
-        let mut finish_down = false;
-        let mut down_loc = [elem[0], elem[1]];
-
-        while !finish_up {
-            up_loc = [up_loc[0] + direction[0], up_loc[1] + direction[1]];
-            let next_item = [up_loc[0], up_loc[1], elem[2], elem[3]];
-
-            if !region.sides.contains(&next_item) {
-                finish_up = true;
-                continue;
-            };
-
-            region.sides.remove(&next_item);
-        }
-
-        while !finish_down {
-            down_loc = [down_loc[0] + direction2[0], down_loc[1] + direction2[1]];
-            let next_item = [down_loc[0], down_loc[1], elem[2], elem[3]];
-
-            if !region.sides.contains(&next_item) {
-                finish_down = true;
-                continue;
-            };
-
-            region.sides.remove(&next_item);
-        }
+        remove_adjacent(&mut region, &elem, [elem[0], elem[1]], dir);
+        remove_adjacent(&mut region, &elem, [elem[0], elem[1]], dir2);
     }
 
     sides_count
