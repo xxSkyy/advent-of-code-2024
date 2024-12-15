@@ -73,7 +73,7 @@ fn main() {
         let mut should_show_image = false;
         let to_find = 8;
 
-        robots.iter().for_each(|robot| {
+        for robot in robots.iter() {
             let mut found = 0;
             for y_plus in 1..=to_find {
                 let exist = robots.iter().find(|other_robot| {
@@ -88,8 +88,9 @@ fn main() {
 
             if found == to_find {
                 should_show_image = true;
+                break;
             }
-        });
+        }
 
         if !should_show_image {
             continue;
