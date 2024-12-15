@@ -55,55 +55,17 @@ fn get_combinations(
     target_x: usize,
     target_y: usize,
 ) -> Vec<Combination> {
-    // let mut combinations = vec![];
-    // let max_clicks_a = target_x / xa;
-    //
-    // for clicks_a in 0..max_clicks_a {
-    //     let xa_value = xa * clicks_a;
-    //
-    //     // println!("{}/{}", xa_value, target_x);
-    //     // println!("{:?}", combinations);
-    //
-    //     if xa_value > target_x {
-    //         continue;
-    //     }
-    //
-    //     if (target_x - xa_value) % xb != 0 {
-    //         continue;
-    //     }
-    //
-    //     let clicks_b = (target_x - xa_value) / xb;
-    //
-    //     if ya * clicks_a + yb * clicks_b == target_y {
-    //         combinations.push([clicks_a, clicks_b]);
-    //     }
-    // }
-    //
-    // combinations
-    //
-    //
-    //
-    // let b = (target_y * xa - ya * target_x) / (yb * xa - ya * xb);
-    // let a = (target_x - xb * b) / xa;
+    let x: f64 = (target_y as f64 * xa as f64 - ya as f64 * target_x as f64)
+        / (yb as f64 * xa as f64 - ya as f64 * xb as f64);
+    let y: f64 = (target_x as f64 - xb as f64 * x) / xa as f64;
 
-    let mut combinations = vec![];
-    let gcd_ab = gcd(xa, xb);
-
-    // Iterate over possible values of m (related to b)
-    let max_m = target_x / xb;
-
-    for m in (0..=max_m).step_by(gcd_ab) {
-        // Calculate potential n value
-        let x_remainder = target_x - m * xb;
-        if x_remainder % xa == 0 {
-            let n = x_remainder / xa;
-            if ya * n + yb * m == target_y {
-                combinations.push([n, m]);
-            }
-        }
+    if y.fract() != 0.0 || x.fract() != 0.0 {
+        return vec![];
     }
 
-    combinations
+    println!("{}, {}", y, x);
+
+    vec![[y as usize, x as usize]]
 }
 
 fn main() {
