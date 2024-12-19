@@ -170,12 +170,12 @@ fn main() {
     let mut finished_reindeers: Vec<Reindeer> = vec![];
 
     while reindeers.len() > 0 {
-        let new_reindeers = Arc::new(Mutex::new(vec![]));
+        let mut new_reindeers = vec![];
         reindeers.iter().for_each(|reindeer| {
-            (*new_reindeers.lock().unwrap()).append(&mut pathfind(&map, reindeer, exit));
+            new_reindeers.append(&mut pathfind(&map, reindeer, exit));
         });
 
-        let mut finished_reindeers_current = (*new_reindeers.lock().unwrap())
+        let mut finished_reindeers_current = new_reindeers
             .iter()
             .filter(|reindeer| reindeer.finished)
             .map(|reindeer| reindeer.clone())
@@ -183,7 +183,7 @@ fn main() {
 
         finished_reindeers.append(&mut finished_reindeers_current);
 
-        reindeers = (*new_reindeers.lock().unwrap())
+        reindeers = new_reindeers
             .iter()
             .filter(|reindeer| {
                 let memo_key = (reindeer.x, reindeer.y, reindeer.direction_index);
